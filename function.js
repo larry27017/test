@@ -203,3 +203,31 @@ function treeToFlat(arr, result = []) {
   return result;
 }
 // console.log(treeToFlat(treeCities));
+
+/**
+ * 
+ * @param {*} ms 延迟时间（毫秒）
+ * @description 用promise改写下面回调地域
+ * setTimeout(() => {
+    console.log(1);
+    setTimeout(() => {
+      console.log(2);
+      setTimeout(() => {
+        console.log(3);
+      }, 1000);
+    }, 1000);
+  }, 1000);
+ */
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+delay(1000).then(() => {
+  console.log(1);
+  return delay(1000)
+}).then(() => {
+  console.log(2);
+  return delay(1000)
+}).then(() => {
+  console.log(3);
+})

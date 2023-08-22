@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>在线图片地址转base64</title>
+  <style></style>
+</head>
+<script>
+  // Image对象转base64
+  function imageToBase64(image) {
+    let canvas = document.createElement('canvas')
+    let width = image.width
+    let height = image.height
+    canvas.width = width
+    canvas.height = height
+    let context = canvas.getContext('2d')
+    context.drawImage(image, 0, 0, width, height)
+    return canvas.toDataURL('image/png')
+  }
+
+  // 回调方式
+  function urlToBase64(url, callback = null) {
+    let image = new Image()
+    image.setAttribute('crossOrigin', 'Anonymous')
+    image.src = url + '?v=' + Math.random()
+    image.onload = function () {
+      let dataURL = imageToBase64(image)
+      if (callback) {
+        callback(dataURL)
+      }
+    }
+  }
+
+  // Promise方式
+  function urlToBase64Async(url) {
+    return new Promise((resolve,) => {
+      urlToBase64(url, (data) => {
+        resolve(data)
+      })
+    })
+  }
+
+  (async () => {
+    let image_url ='https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'
+    // let image_url = 'https://cdn.jgjapp.com/media/images/newsimgs/20230416/18_1612415269.jpeg'
+    const dataURL = await urlToBase64Async(image_url)
+    console.log(dataURL)
+  })();
+</script>
+<body>
+  
+</body>
+</html>
