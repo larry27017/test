@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./reset.css">
+  <!-- <script src="./test.js"></script> -->
+  <style>
+    .container {
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .left,
+  .right,
+  .main {
+    display: table-cell;
+  }
+
+  .left,
+  .right {
+    width: 100px;
+    background: green;
+  }
+
+  .main {
+    background: black;
+    color: white;
+    width: 100%;
+  }
+  img{
+    /* max-width: 300px; */
+    transform: scale(0.625)
+  }
+  </style>
+  <script>
+    // 通用数据类型检测方法
+    // function getType(obj) {
+    //   let type = typeof obj
+    //   // 先判断基础类型直接返回
+    //   if (type !== 'object') {
+    //     return type;
+    //   }
+    //   return Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, '$1')
+    // }
+    // console.log(getType([])
+
+    // (function eventLoop() {
+    //   console.log('start');
+    //   setTimeout(() => {
+    //     console.log('child2');
+    //     Promise.resolve().then(() => {
+    //       console.log('child2-1');
+    //     });
+    //   }, 0);
+    //   setTimeout(() => {
+    //     console.log('child3');
+    //     Promise.resolve().then(() => {
+    //       console.log('child3-1');
+    //     });
+    //   }, 0);
+    //   Promise.resolve().then(() => {
+    //     console.log('child1');
+    //   });
+    //   console.log('end');
+    // })();
+    // start end child1 child2 child2-1 child3 child3-1
+
+    // var a = 10;
+    // (function () {
+    //   console.log(a);
+    //   a = 5;
+    //   console.log(window.a);
+    //   // var a = 20;
+    //   console.log(a);
+    // })()
+
+    // const sleep = (time) => {
+    //   return new Promise((resolve) => {
+    //     setTimeout(resolve, time);
+    //   })
+    // }
+    // sleep(3000).then(() => {
+    //   console.log('12das')
+    // })
+    
+
+  </script>
+</head>
+<body>
+  <div class="container">
+    <img src="./assets/images/3174701-8e74b69ad9376710.webp"  style="width: 480px!important;">
+    <!-- <div class="left">左边固定宽度</div>
+    <div class="main">中间自适应</div>
+    <div class="right">右边固定宽度</div> -->
+  </div>
+</body>
+</html>
