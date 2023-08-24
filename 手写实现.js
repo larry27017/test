@@ -5,48 +5,184 @@
 * 让函数的this指向这个对象，执行构造函数的代码（为这个新对象添加属性）
 * 判断函数的返回值类型，如果是值类型，返回创建的对象。如果是引用类型，就返回这个引用类型的对象
 */
-// function myNew(constructor, ...args) {
-//   const obj = {};
-//   obj.__proto__ = constructor.prototype;
-//   let value = constructor.apply(obj, args);
-//   return (value instanceof Object) ? value : obj;
-// }
+function myNew(constructor, ...args) {
+  const obj = {};
+  obj.__proto__ = constructor.prototype;
+  let value = constructor.apply(obj, args);
+  return (value instanceof Object) ? value : obj;
+}
 
-// function Person(name, age) {
-//   this.name = name;
-//   this.age = age;
-// }s
-// const person1 = myNew(Person, 'Larry', 30);
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}s
+const person1 = myNew(Person, 'Larry', 30);
 // console.log(person1);
 
 /**
 * 手写instanceof
 */
-// function myInstanceof(left, right) {
-//   // 先判断基础类型
-//   if (typeof left !== Object || right === null) return false;
-//   // 使用Object自带获取原型的api getPrototypeOf
-//   let proto = Object.getPrototypeOf(left);
-//   while (true) {
-//     if (proto === null) return false;
-//     if (proto === right.prototype) return true;
-//     proto = Object.getPrototypeOf(proto);
-//   }
-// }
+function myInstanceof(left, right) {
+  // 先判断基础类型
+  if (typeof left !== Object || right === null) return false;
+  // 使用Object自带获取原型的api getPrototypeOf
+  let proto = Object.getPrototypeOf(left);
+  while (true) {
+    if (proto === null) return false;
+    if (proto === right.prototype) return true;
+    proto = Object.getPrototypeOf(proto);
+  }
+}
 
 /**
 * 通用数据类型检测方法
 * Object.prototype.toString.call
 */
-// function getType(obj) {
-//   let type = typeof obj
-//   // 先判断基础类型直接返回
-//   if (type !== 'object') {
-//     return type;
-//   }
-//   return Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, '$1');
-// }
+function getType(obj) {
+  let type = typeof obj
+  // 先判断基础类型直接返回
+  if (type !== 'object') {
+    return type;
+  }
+  return Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, '$1');
+}
 // console.log(getType([]))
+
+/**
+ * 模拟实现一个 Promise.finally
+ * 注：Promise.finally()方法返回一个Promise。
+ *    在promise结束时，无论结果是fulfilled或者是rejected，都会执行指定的回调函数。
+ *    这个方法可以用于在Promise是否成功完成后执行一些清理工作或者重置操作。
+ */
+Promise.prototype.finally = function(callback) {
+  let P = this.constructor;
+  return this.then(
+    (value) => P.resolve(callback()).then(() => value),
+    (reason) => P.resolve(callback()).then(() => { throw reason; })
+  )
+};
+
+/**
+ * 模拟实现一个 Promise.all
+ * 注：Promise.all() 静态方法接受一个 Promise 可迭代对象作为输入，并返回一个 Promise。
+ *    当所有输入的 Promise 都被兑现时，返回的 Promise 也将被兑现（即使传入的是一个空的可迭代对象），并返回一个包含所有兑现值的数组。
+ *    如果输入的任何 Promise 被拒绝，则返回的 Promise 将被拒绝，并带有第一个被拒绝的原因。
+ */
+Promise.prototype.all = function(promises) {
+  return new Promise(function(resolve, reject) {
+    let resolveCount = 0;
+    let promiseLen = promise.length;
+    var resolveValues = new Array(promiseNum)
+    for (var i = 0; i < promiseLen; i++){
+      (function(i) {
+        Promise.resolve(promises[i]).then(function(value) {
+          resolveCount++;
+          resolveValues[i] = value;
+          if (resolveCount === promiseLen) {
+            return resolve(resolveValues);
+          }
+        }, function(reason) {
+          return reject(reason);
+        })
+      })(i)
+    }
+  })
+};
+
+/**
+* @desc 手写call、apply、bind
+*/
+Function.prototype.myCall = function(context, ...args) {
+  // 如果没有传入 context，默认为全局对象
+  context = context || window;
+  // 使用 Symbol 避免属性名冲突
+  const key = Symbol();
+  // 将函数添加到 context 对象上
+  context[key] = this;
+  // 在 context 上调用函数
+  const res = context[key](...args);
+  // 删除临时属性
+  delete context[key];
+  return res;
+};
+Function.prototype.myApply = function(context, argsArr) {
+  context = context || window;
+  const key = Symbol();
+  context[key] = this;
+  const res = context[key](...argsArr);
+  delete context[key];
+  return res;
+};
+// Function.prototype.myBind = function(ctx, ...args) {
+//   const fn = this;
+//   return function(...newArgs) {
+//     return fn.apply(ctx, [...args, ...newArgs]);
+//   };
+// }
+Function.prototype.myBind = function(ctx, ...args) {
+  const fn = this;
+  return function newFn(...newArgs) {
+    // 若通过 new 关键字调用，有几种方式可以判断：
+    // 1. this instanceof newFn
+    // 2. this.__proto__.constructor === newFn
+    // 3. new.target 不为 undefined    
+    if (new.target) {
+      return new newFn(...args, ...newArgs);
+    }
+    return fn.apply(ctx, [...args, ...newArgs]);
+  };
+}
+// 示例
+function greet(name) {
+  console.log(`Hello, ${name}! I'm ${this.name}.`);
+}
+const person = { name: 'John' };
+// greet.myCall(person, 'Alice'); 
+// greet.myApply(person, ['Alice', 'Andy']); 
+// greet.myBind(person, 'Alice'); 
+
+/**
+ * 实现防抖函数
+ */
+function debounce(fn) {
+  let timer;
+  return function(value) {
+    
+  }
+}
+
+/**
+ * 深克隆
+ */
+function deepClone(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (obj instanceof Date) {
+    return new Date(obj);
+  }
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
+  }
+  let cloneObj = new obj.constructor;
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      cloneObj[key] = deepClone(obj[key])
+    }
+  }
+  return cloneObj;
+}
+const originalObj = {
+  name: 'John',
+  age: 30,
+  nested: {
+    city: 'New York',
+    country: 'USA'
+  },
+  hobbies: ['Reading', 'Cooking']
+};
+const clonedObj = deepClone(originalObj);
+
 
 /**
  * 编写一个程序将数组扁平化去并除其中重复部分数据，最终得 到一个升序且不重复的数组
@@ -155,49 +291,6 @@
 // console.log(b) // { n: 1, x: { n: 2 } }
 
 /**
- * 冒泡排序：相邻两项比较，前面大于(升序)或小于(降序)后面就交换位置
- */
-// function bubbleSort(arr) {
-//   const array = [...arr];
-//   console.time('time')
-//   for (let i = 0, len = array.length; i < len - 1; i++){
-//     for (let j = i + 1; j < len; j++) {
-//       if (array[i] > array[j]) {
-//         let temp = array[i];
-//         array[i] = array[j];
-//         array[j] = temp;
-//         isOk = false;
-//       }
-//     }
-//   }
-//   console.timeEnd('time')
-//   return array;
-// }
-// 优化版
-// function bubbleSort(arr) {
-//   const array = [...arr]
-//   console.time('time')
-//   let isOk = true;
-//   for (let i = 0, len = array.length; i < len - 1; i++) {
-//     for(let j = i + 1; j < len; j++) {
-//       if (array[i] > array[j]) {
-//         let temp = array[i];
-//         array[i] = array[j];
-//         array[j] = temp;
-//         isOk = false;
-//       }
-//     }
-//     if(isOk){
-//       break;
-//     }
-//   }
-//   console.timeEnd('time')
-//   return array;
-// };
-// const arr1 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
-// console.log(bubbleSort(arr1));
-
-/**
  * 将数据{1:222, 2:123, 5:888}处理为：[222, 123, null, null, 888, null, null, null, null, null, null, null]。
  */
 // let obj = {1:222, 2:123, 5:888};
@@ -263,58 +356,6 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 // console.log(getIntersections([1,2,3,3,4,5,6], [3,5,5,6,3]))
 
 /**
- * 模拟实现一个 Promise.finally
- * 注：Promise.finally()方法返回一个Promise。
- *    在promise结束时，无论结果是fulfilled或者是rejected，都会执行指定的回调函数。
- *    这个方法可以用于在Promise是否成功完成后执行一些清理工作或者重置操作。
- */
-Promise.prototype.finally = function(callback) {
-  let P = this.constructor;
-  return this.then(
-    (value) => P.resolve(callback()).then(() => value),
-    (reason) => P.resolve(callback()).then(() => { throw reason; })
-  )
-};
-
-/**
- * 模拟实现一个 Promise.all
- * 注：Promise.all() 静态方法接受一个 Promise 可迭代对象作为输入，并返回一个 Promise。
- *    当所有输入的 Promise 都被兑现时，返回的 Promise 也将被兑现（即使传入的是一个空的可迭代对象），并返回一个包含所有兑现值的数组。
- *    如果输入的任何 Promise 被拒绝，则返回的 Promise 将被拒绝，并带有第一个被拒绝的原因。
- */
-Promise.prototype.all = function(promises) {
-  return new Promise(function(resolve, reject) {
-    let resolveCount = 0;
-    let promiseLen = promise.length;
-    var resolveValues = new Array(promiseNum)
-    for (var i = 0; i < promiseLen; i++){
-      (function(i) {
-        Promise.resolve(promises[i]).then(function(value) {
-          resolveCount++;
-          resolveValues[i] = value;
-          if (resolveCount === promiseLen) {
-            return resolve(resolveValues);
-          }
-        }, function(reason) {
-          return reject(reason);
-        })
-      })(i)
-    }
-  })
-};
-
-/**
- * 算法：从长度为m的字符串S中查找长度为n的字符串T，并返回位置
- */
-function findStr(S, T) {
-  if (S.length < T.length) return -1;
-  for (let index = 0; index < S.length; index++) {
-    if (S.slice(i, i + T.length) === T) return i;
-  }
-  return -1;
-}
-
-/**
  * 代码输出结果
  * 注：1.对象的键名只能是字符串和 Symbol 类型。
  *    2.其他类型的键名会被转换成字符串类型。
@@ -343,27 +384,6 @@ function findStr(S, T) {
 // }
 // console.log(rotateArr(arr, 9));
 
-/**
- * 实现防抖函数
- */
-// function debounce(fn) {
-//   let timer;
-//   return function(value) {
-    
-//   }
-// }
-
-/**
- * 找出1-10000中的对称数
- */
-// function symmetryNum() {
-//   let arr = [...Array(10000).keys()]
-//   return arr.filter((x) => {
-//     return x.toString().length > 1 &&
-//       x === Number(x.toString().split('').reverse().join(''));
-//   });
-// }
-// console.log(symmetryNum());
 
 /**
  * 移动数组中的0到最后
@@ -432,61 +452,3 @@ function findStr(S, T) {
 //   return res;
 // };
 // console.log(convert(list));
-
-/**
- * 
- */
-// function Foo() {
-//   Foo.a = function() {
-//     console.log(1);
-//   };
-//   this.a = function() {
-//     console.log(2);
-//   };
-// };
-// Foo.prototype.a = function() {
-//   console.log(3);
-// };
-// Foo.a = function() {
-//   console.log(4);
-// };
-// Foo.a(); //4
-// let obj = new Foo();
-// obj.a(); //2
-// Foo.a(); //1
-
-/**
- * 深克隆
- */
-// function deepClone(obj) {
-//   if (obj === null || typeof obj !== 'object') {
-//     return obj;
-//   }
-//   if (obj instanceof Date) {
-//     return new Date(obj);
-//   }
-//   if (obj instanceof RegExp) {
-//     return new RegExp(obj);
-//   }
-//   let cloneObj = new obj.constructor;
-//   for (let key in obj) {
-//     if (obj.hasOwnProperty(key)) {
-//       cloneObj[key] = deepClone(obj[key])
-//     }
-//   }
-//   return cloneObj;
-// }
-// const originalObj = {
-//   name: 'John',
-//   age: 30,
-//   nested: {
-//     city: 'New York',
-//     country: 'USA'
-//   },
-//   hobbies: ['Reading', 'Cooking']
-// };
-// const clonedObj = deepClone(originalObj);
-
-Promise.prototype.all = function name(params) {
-  
-}
