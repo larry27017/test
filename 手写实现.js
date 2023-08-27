@@ -15,7 +15,7 @@ function myNew(constructor, ...args) {
 function Person(name, age) {
   this.name = name;
   this.age = age;
-}s
+}
 const person1 = myNew(Person, 'Larry', 30);
 // console.log(person1);
 
@@ -47,47 +47,6 @@ function getType(obj) {
   return Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, '$1');
 }
 // console.log(getType([]))
-
-/**
- * 模拟实现一个 Promise.finally
- * 注：Promise.finally()方法返回一个Promise。
- *    在promise结束时，无论结果是fulfilled或者是rejected，都会执行指定的回调函数。
- *    这个方法可以用于在Promise是否成功完成后执行一些清理工作或者重置操作。
- */
-Promise.prototype.finally = function(callback) {
-  let P = this.constructor;
-  return this.then(
-    (value) => P.resolve(callback()).then(() => value),
-    (reason) => P.resolve(callback()).then(() => { throw reason; })
-  )
-};
-
-/**
- * 模拟实现一个 Promise.all
- * 注：Promise.all() 静态方法接受一个 Promise 可迭代对象作为输入，并返回一个 Promise。
- *    当所有输入的 Promise 都被兑现时，返回的 Promise 也将被兑现（即使传入的是一个空的可迭代对象），并返回一个包含所有兑现值的数组。
- *    如果输入的任何 Promise 被拒绝，则返回的 Promise 将被拒绝，并带有第一个被拒绝的原因。
- */
-Promise.prototype.all = function(promises) {
-  return new Promise(function(resolve, reject) {
-    let resolveCount = 0;
-    let promiseLen = promise.length;
-    var resolveValues = new Array(promiseNum)
-    for (var i = 0; i < promiseLen; i++){
-      (function(i) {
-        Promise.resolve(promises[i]).then(function(value) {
-          resolveCount++;
-          resolveValues[i] = value;
-          if (resolveCount === promiseLen) {
-            return resolve(resolveValues);
-          }
-        }, function(reason) {
-          return reject(reason);
-        })
-      })(i)
-    }
-  })
-};
 
 /**
 * @desc 手写call、apply、bind
@@ -267,18 +226,6 @@ const clonedObj = deepClone(originalObj);
 // obj.push(1);
 // obj.push(2);
 // console.log(obj);
-
-/** 
- * 实现 (5).add(3).minus(2) 功能。
- * 例： 5 + 3 - 2 结果为6
- */
-// Number.prototype.add = function(n) {
-//   return this.valueOf() + n
-// };
-// Number.prototype.minus = function(n) {
-//   return this.valueOf() - n
-// };
-// console.log((5).add(3).minus(2))
 
 /**
  * 1.赋值从右向左
