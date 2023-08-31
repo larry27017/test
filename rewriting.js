@@ -149,8 +149,8 @@ const clonedObj = deepClone(originalObj);
  * Set去重
  * sort排序
  */
-// let arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
-// const newArr = Array.from(new Set(arr.flat(Infinity))).sort((a, b) => { return a - b; });
+let arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
+const newArr = Array.from(new Set(arr.flat(Infinity))).sort((a, b) => { return a - b; });
 // console.log(newArr);
 
 // const promise = new Promise((resolve, reject) => {
@@ -165,35 +165,35 @@ const clonedObj = deepClone(originalObj);
 /**
  * 事件循环
  */
-// function eventLoop() {
-//   console.log('start');
-//   setTimeout(() => {
-//     console.log('child2');
-//     Promise.resolve().then(() => {
-//       console.log('child2-1');
-//     });
-//   }, 0);
-//   setTimeout(() => {
-//     console.log('child3');
-//     Promise.resolve().then(() => {
-//       console.log('child3-1');
-//     });
-//   }, 0);
-//   Promise.resolve().then(() => {
-//     console.log('child1');
-//   });
-//   console.log('end');
-// }
+function eventLoop() {
+  console.log('start');
+  setTimeout(() => {
+    console.log('child2');
+    Promise.resolve().then(() => {
+      console.log('child2-1');
+    });
+  }, 0);
+  setTimeout(() => {
+    console.log('child3');
+    Promise.resolve().then(() => {
+      console.log('child3-1');
+    });
+  }, 0);
+  Promise.resolve().then(() => {
+    console.log('child1');
+  });
+  console.log('end');
+}
 
 /**
  * 改造示例代码输出0-9
  * 
  */
-// for (var i = 0; i < 10; i++) {
-//   setTimeout(() => {
-//     console.log(i);
-//   }, 1000);
-// }
+for (var i = 0; i < 10; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 1000);
+}
 
 // 使用迭代的方式实现flatten函数
 // function flatten(arr) {
@@ -240,8 +240,8 @@ const clonedObj = deepClone(originalObj);
 /**
  * 将数据{1:222, 2:123, 5:888}处理为：[222, 123, null, null, 888, null, null, null, null, null, null, null]。
  */
-// let obj = {1:222, 2:123, 5:888};
-// const arr = Array.from({ length: 12 }).map((_, index) => obj[index+1] || null);
+let obj = {1:222, 2:123, 5:888};
+const arr = Array.from({ length: 12 }).map((_, index) => obj[index+1] || null);
 // console.log(arr);
 
 /**
@@ -294,12 +294,12 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 /**
  * 给定两个数组计算交集 nums1 = [1, 2, 2, 1]，nums2 = [2, 2]，返回 [2, 2]。
  */
-// function getIntersections(arr1, arr2) {
-//   let arr = arr1.filter((item) => {
-//     return arr2.includes(item);
-//   });
-//   return arr;
-// }
+function getIntersections(arr1, arr2) {
+  let arr = arr1.filter((item) => {
+    return arr2.includes(item);
+  });
+  return arr;
+}
 // console.log(getIntersections([1,2,3,3,4,5,6], [3,5,5,6,3]))
 
 /**
@@ -335,37 +335,37 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 /**
  * 移动数组中的0到最后
  */
-// function moveZero(array) {
-//   const len = array.length;
-//   let j = 0;
-//   for (let i = 0; i < len-j; i++) {
-//     if (array[i] === 0) {
-//       array.splice(i, 1);
-//       array.push(0);
-//       i--;
-//       j++;
-//     }
-//     console.log(array)
-//   }
-//   return array;
-// }
+function moveZero(array) {
+  const len = array.length;
+  let j = 0;
+  for (let i = 0; i < len-j; i++) {
+    if (array[i] === 0) {
+      array.splice(i, 1);
+      array.push(0);
+      i--;
+      j++;
+    }
+    console.log(array)
+  }
+  return array;
+}
 // console.log(moveZero([2, 0, 1, 0, 3, 0]));
 
 /**
  * 从数组nums中找出和为target的两个数字的索引
  */
-// function sum(arr, target) {
-//   for (let i = 0; i < arr.length; i++){
-//     for (let j = 1; j > i; j++){
-//       if (arr[i] < target && arr[i] + arr[j] === target) {
-//         return [i, j]
-//       }
-//       if (j == arr.length) {
-//         return new Error('not found')
-//       }
-//     }
-//   }
-// }
+function sum(arr, target) {
+  for (let i = 0; i < arr.length; i++){
+    for (let j = 1; j > i; j++){
+      if (arr[i] < target && arr[i] + arr[j] === target) {
+        return [i, j]
+      }
+      if (j == arr.length) {
+        return new Error('not found')
+      }
+    }
+  }
+}
 // console.log(sum([2, 7, 11, 15], 17));
 
 /**
@@ -381,21 +381,21 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 //   { id: 7, name: '部门 G', parentId: 2 },
 //   { id: 8, name: '部门 H', parentId: 4 }
 // ];
-// function convert(list) {
-//   const res = []
-//   const map = list.reduce((res, v) => (res[v.id] = v, res), {});
-//   console.log(map);
-//   for (const item of list) {
-//     if (item.parentId === 0) {
-//       res.push(item);
-//       continue;
-//     }
-//     if (item.parentId in map) {
-//       const parent = map[item.parentId];
-//       parent.children = parent.children || [];
-//       parent.children.push(item);
-//     }
-//   }
-//   return res;
-// };
+function convert(list) {
+  const res = []
+  const map = list.reduce((res, v) => (res[v.id] = v, res), {});
+  console.log(map);
+  for (const item of list) {
+    if (item.parentId === 0) {
+      res.push(item);
+      continue;
+    }
+    if (item.parentId in map) {
+      const parent = map[item.parentId];
+      parent.children = parent.children || [];
+      parent.children.push(item);
+    }
+  }
+  return res;
+};
 // console.log(convert(list));
