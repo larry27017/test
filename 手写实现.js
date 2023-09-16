@@ -24,7 +24,7 @@ const person1 = myNew(Person, 'Larry', 30);
 */
 function myInstanceof(left, right) {
   // 先判断基础类型
-  if (typeof left !== Object || right === null) return false;
+  if (typeof left !== 'object' || right === null) return false;
   // 使用Object自带获取原型的api getPrototypeOf
   let proto = Object.getPrototypeOf(left);
   while (true) {
@@ -103,10 +103,14 @@ const person = { name: 'John' };
 /**
  * 实现防抖函数
  */
-function debounce(fn) {
+function debounce(fn, delayTime) {
   let timer;
-  return function(value) {
-    
+  return function() {
+    var context = this, args = arguments;
+    timer && clearTimeout(timeout);
+    timer = setTimeout(() => {
+      fn.apply(context, args);
+    }, delayTime)
   }
 }
 
@@ -150,7 +154,7 @@ const clonedObj = deepClone(originalObj);
  * sort排序
  */
 // let arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
-// const newArr = Array.from(new Set(arr.flat(Infinity))).sort((a, b) => { return a - b; });
+const newArr = Array.from(new Set(arr.flat(Infinity))).sort((a, b) => { return a - b; });
 // console.log(newArr);
 
 // const promise = new Promise((resolve, reject) => {
