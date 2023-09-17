@@ -191,7 +191,7 @@ function eventLoop() {
  */
 for (var i = 0; i < 10; i++) {
   setTimeout(() => {
-    console.log(i);
+    // console.log(i);
   }, 1000);
 }
 
@@ -241,7 +241,7 @@ for (var i = 0; i < 10; i++) {
  * 将数据{1:222, 2:123, 5:888}处理为：[222, 123, null, null, 888, null, null, null, null, null, null, null]。
  */
 let obj = {1:222, 2:123, 5:888};
-const arr = Array.from({ length: 12 }).map((_, index) => obj[index+1] || null);
+// const arr = Array.from({ length: 12 }).map((_, index) => obj[index+1] || null);
 // console.log(arr);
 
 /**
@@ -384,7 +384,7 @@ function sum(arr, target) {
 function convert(list) {
   const res = []
   const map = list.reduce((res, v) => (res[v.id] = v, res), {});
-  console.log(map);
+  // console.log(map);
   for (const item of list) {
     if (item.parentId === 0) {
       res.push(item);
@@ -399,3 +399,25 @@ function convert(list) {
   return res;
 };
 // console.log(convert(list));
+
+/**
+ * 柯里化
+ * @param {*} fn 
+ */
+function curry(fn) {
+  let len = fn.length;
+  let params = [];
+  return function partial(x) {
+    params.push(x);
+    if(params.length === len){
+      return fn(...params)
+    }else{
+      return partial();
+    }
+  }
+}
+const fn = (...args) => {
+  return 
+}
+const curryAdd = curry((a, b, c) => a + b + c);
+console.log(curryAdd(1)(2)(3));
